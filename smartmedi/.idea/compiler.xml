@@ -27,5 +27,10 @@
         <module name="connector" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="api" target="1.5" />
+      <module name="connector" target="1.5" />
+      <module name="smartmedi" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>
