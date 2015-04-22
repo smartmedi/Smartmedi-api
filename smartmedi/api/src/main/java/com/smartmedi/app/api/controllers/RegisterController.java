@@ -58,7 +58,7 @@ public class RegisterController {
 
     }
 
-    public static void sendVerificationCode(Request request, Response response) {
+    public static String sendVerificationCode(Request request, Response response) {
 
         String phone = request.getHeader("phone").toString();
 
@@ -81,10 +81,12 @@ public class RegisterController {
             registeredUser.put("phone_number", phone);
             registeredUser.put("status", "0");
             cassandraConnector.insertDetails("registered_users", registeredUser);
+            return "success";
         }
         else
         {
             cassandraConnector.updateRow("registered_users", "0", "status", "phone_number", phone);
+            return "success";
         }
 
     }

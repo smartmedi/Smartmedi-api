@@ -14,8 +14,6 @@ import java.util.LinkedHashMap;
  */
 public class PlivoConnector {
 
-
-
     public String sendSms(String receiver,String auth_key,String auth_token){
 
         RestAPI restAPI=new RestAPI(auth_key,auth_token,"v1");
