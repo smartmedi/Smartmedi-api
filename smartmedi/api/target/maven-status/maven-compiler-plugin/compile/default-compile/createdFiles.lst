@@ -3,3 +3,4 @@ com/smartmedi/app/api/controllers/RegisterController.class
 com/smartmedi/app/api/Routes/AllRoutes.class
 com/smartmedi/app/api/appDI/AppDI.class
 com/smartmedi/app/api/Routes/RoutesBuilder.class
+com/smartmedi/app/api/jsonparser/JsonParser.class

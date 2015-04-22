@@ -2,6 +2,7 @@ package com.smartmedi.app.api.controllers;
 
 import com.datastax.driver.core.Row;
 import com.plivo.helper.api.client.RestAPI;
+import com.smartmedi.app.api.jsonparser.JsonParser;
 import com.smartmedi.dbconnector.CassandraConnector;
 import com.smartmedi.plivoconnector.PlivoConnector;
 import org.apache.avro.util.Utf8;
@@ -58,35 +59,42 @@ public class RegisterController {
 
     }
 
-    public static String sendVerificationCode(Request request, Response response) {
+    public static JSONObject sendVerificationCode(Request request, Response response) {
 
         String phone = request.getHeader("phone").toString();
 
         String resp = plivoConnector.sendSms(phone, "MAMDY2YZCWYJJIMJVMMZ", "YjExMTRhMDYyZTZhOGI4NmViYTkzY2Q5YmE5ZjE1");
 
-        List<Row> rowList = cassandraConnector.getID("smartmedi", "users");
-        Row row = rowList.get(0);
+        if(!resp.equals("error")) {
 
-        Long user_id = row.getLong(0);
 
-        List<Row> rows=cassandraConnector.getRowListWhere("registered_users","phone_number",phone);
-        Boolean isDataExist=false;
-        if(rows!=null && rows.size()>0){
-            isDataExist=true;
-        }
+            List<Row> rowList = cassandraConnector.getID("smartmedi", "users");
+            Row row = rowList.get(0);
 
-        if (!isDataExist) {
-            Map<String, Object> registeredUser = new HashMap<String, Object>();
-            registeredUser.put("user_id", user_id);
-            registeredUser.put("phone_number", phone);
-            registeredUser.put("status", "0");
-            cassandraConnector.insertDetails("registered_users", registeredUser);
-            return "success";
+            Long user_id = row.getLong(0);
+
+            List<Row> rows = cassandraConnector.getRowListWhere("registered_users", "phone_number", phone);
+            Boolean isDataExist = false;
+            if (rows != null && rows.size() > 0) {
+                isDataExist = true;
+            }
+
+            if (!isDataExist) {
+                Map<String, Object> registeredUser = new HashMap<String, Object>();
+                registeredUser.put("user_id", user_id);
+                registeredUser.put("phone_number", phone);
+                registeredUser.put("status", "0");
+                cassandraConnector.insertDetails("registered_users", registeredUser);
+
+            } else {
+                cassandraConnector.updateRow("registered_users", "0", "status", "phone_number", phone);
+
+            }
+            return JsonParser.getInstance().successResponse(resp);
         }
         else
         {
-            cassandraConnector.updateRow("registered_users", "0", "status", "phone_number", phone);
-            return "success";
+            return JsonParser.getInstance().errorResponse();
         }
 
     }

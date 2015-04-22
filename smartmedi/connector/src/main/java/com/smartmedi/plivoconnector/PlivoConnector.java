@@ -27,8 +27,7 @@ public class PlivoConnector {
             MessageResponse msgResponse = restAPI.sendMessage(parameters);
             System.out.print(getFields(msgResponse));
             if (msgResponse.serverCode == 202) {
-                System.out.println(msgResponse);
-              return "success";
+              return String.valueOf(randomPIN);
             } else {
                 System.out.println(msgResponse.error);
                 return "error";
