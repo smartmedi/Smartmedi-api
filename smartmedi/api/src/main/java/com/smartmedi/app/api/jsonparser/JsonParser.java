@@ -9,8 +9,6 @@ import org.json.simple.JSONObject;
 public class JsonParser {
     private static JsonParser jsonParser=null;
 
-
-
     private JsonParser(){
 
     }
@@ -34,6 +32,13 @@ public class JsonParser {
         jsonObject=new JSONObject();
         jsonObject.put("rsp",400);
         jsonObject.put("msg","error");
+        return jsonObject;
+    }
+
+    public JSONObject errorResponse(String msg){
+        jsonObject=new JSONObject();
+        jsonObject.put("rsp",400);
+        jsonObject.put("msg",msg);
         return jsonObject;
     }
 }

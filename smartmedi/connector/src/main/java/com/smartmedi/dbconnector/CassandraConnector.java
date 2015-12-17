@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -28,10 +29,21 @@ public class CassandraConnector {
         session.execute(insert);
     }
 
+    public  Row getRowWhere(String column_family, String indexed_column_name, String value) {
+        ResultSet result = session.execute("select * from " + column_family + " where " + indexed_column_name + "=\'" + value + "\'" + " ALLOW FILTERING");
+        return  result.one();
+    }
+
     public List<Row> getRowListWhere(String column_family, String indexed_column_name, String value) {
         ResultSet result = session.execute("select * from " + column_family + " where " + indexed_column_name + "=\'" + value + "\'" + " ALLOW FILTERING");
         return result.all();
     }
+
+    public List<Row> getRowListUsingInt(String column_family, String indexed_column_name, Long value) {
+        ResultSet result = session.execute("select * from " + column_family + " where " + indexed_column_name + "=" + value + " ALLOW FILTERING");
+        return result.all();
+    }
+
 
     public void updateRow(String column_family, String value,String update_row,String indexed_column_name,String indexed_value) {
         PreparedStatement incHitsQ = session.prepare(
@@ -42,11 +54,26 @@ public class CassandraConnector {
 
     public List<Row> getID(String keyspace, String table) {
         PreparedStatement incHitsQ = session.prepare(
-                "UPDATE users SET value = value + ? WHERE KEY = 'row-key' and column1 = 'id' ");
+                "UPDATE "+table+" SET value = value + ? WHERE KEY = 'row-key' and column1 = 'id' ");
         BoundStatement bs = incHitsQ.bind(100L);
         Statement select = QueryBuilder.select("value").from(keyspace, table);
         session.execute(bs);
         ResultSet results = session.execute(select);
         return results.all();
+    }
+
+    public List<Row> getMedicineID(String keyspace, String table) {
+        //PreparedStatement incHitsQ = session.prepare(
+          //      "UPDATE "+table+" SET value = value + ? WHERE KEY = 'med-id' and medicine_id = 'id' ");
+        //BoundStatement bs = incHitsQ.bind(100L);
+        Statement select = QueryBuilder.select("value").from(keyspace, table);
+        session.execute("UPDATE "+table+" SET value = value + 1 WHERE KEY = 'med-id' and medicine_id = 'id' ");
+        ResultSet results = session.execute(select);
+        return results.all();
+    }
+
+    public List<Row>  getRowLists(String table,String index,String values) {
+        ResultSet result=session.execute("select * FROM " + table + " where " + index + " in (" + values + ")");
+        return result.all();
     }
 }

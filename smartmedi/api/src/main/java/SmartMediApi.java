@@ -1,4 +1,4 @@
-import com.smartmedi.app.api.Routes.AllRoutes;
+import com.smartmedi.app.api.Routes.*;
 import com.smartmedi.app.api.appDI.AppDI;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -10,13 +10,13 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  */
 public class SmartMediApi {
 
-    public static void main(String args[]){
+   public static void main(String args[]){
        String file= Thread.currentThread().getContextClassLoader().getResource("api.properties").getFile();
         PropertiesConfiguration propertiesConfiguration=new PropertiesConfiguration();
         propertiesConfiguration.setDelimiterParsingDisabled(true);
         try {
             propertiesConfiguration.load(file);
-        } catch (ConfigurationException e) {
+        } catch (ConfigurationException e){
             e.printStackTrace();
         }
         final AnnotationConfigApplicationContext annotation_context=new AnnotationConfigApplicationContext();
